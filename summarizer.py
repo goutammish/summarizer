@@ -6,11 +6,17 @@ from langchain_core.prompts import PromptTemplate
 
 load_dotenv()
 
+api_key = os.getenv("GOOGLE_API_KEY")
+
+print("API KEY FOUND:", api_key is not None)
+print("API KEY LENGTH:", len(api_key) if api_key else 0)
+
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
     google_api_key=os.getenv("GOOGLE_API_KEY"),
-    temperature=0.3
+    temperature=0.3,
 )
+
 
 def summarize_text(text):
 
@@ -25,15 +31,12 @@ def summarize_text(text):
         """,
         input_variables=["text"],
         partial_variables={
-            "instruction":
-            "Summarize the following text in 5 bullet points."
-        }
+            "instruction": "Summarize the following text in 5 bullet points."
+        },
     )
 
     chain = prompt | llm
 
-    response = chain.invoke({
-        "text": text
-    })
+    response = chain.invoke({"text": text})
 
     return response.content
